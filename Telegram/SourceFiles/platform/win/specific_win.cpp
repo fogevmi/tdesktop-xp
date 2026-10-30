@@ -235,7 +235,8 @@ QString psAppDataPath() {
 #ifdef OS_WIN_STORE
 		return appData.absolutePath() + u"/Telegram Desktop UWP/"_q;
 #else // OS_WIN_STORE
-		return appData.absolutePath() + '/' + AppName.utf16() + '/';
+		// Fokigram: keep the forkgram data folder, so an existing login carries over.
+		return appData.absolutePath() + u"/Telegram Desktop/"_q;
 #endif // OS_WIN_STORE
 	}
 	return QString();

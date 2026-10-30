@@ -392,11 +392,12 @@ void start() {
 		LogsData = nullptr;
 	}
 
-	LOG(("Launched version: %1, install beta: %2, alpha: %3, debug mode: %4"
+	LOG(("Launched %5 version: %1, install beta: %2, alpha: %3, debug mode: %4"
 		).arg(AppVersion
 		).arg(Logs::b(cInstallBetaVersion())
 		).arg(cAlphaVersion()
-		).arg(Logs::b(DebugEnabled())));
+		).arg(Logs::b(DebugEnabled())
+		).arg(AppName.utf16()));
 	LOG(("Executable dir: %1, name: %2").arg(cExeDir(), cExeName()));
 	LOG(("Initial working dir: %1").arg(launcher.initialWorkingDir()));
 	LOG(("Working dir: %1").arg(cWorkingDir()));

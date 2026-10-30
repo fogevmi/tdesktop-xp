@@ -811,26 +811,23 @@ jobs:
 
       - name: Package.
         run: |
-          $name = "Telegram_XP_$env:AppVersionStr" + "_x86"
+          $name = "Fokigram_XP_$env:AppVersionStr" + "_x86"
           $stage = Join-Path $env:RUNNER_TEMP $name
           New-Item -ItemType Directory -Force -Path $stage | Out-Null
-          # Fully static, so the app is one file - plus Updater.exe, which is what
-          # applies a downloaded update. Without it next to the app the update is
-          # fetched and verified and then simply never installed.
-          Copy-Item "$PWD\$env:BUILD_DIR\Telegram.exe" $stage
-          Copy-Item "$PWD\$env:BUILD_DIR\Updater.exe" $stage
+          # Fokigram: fully static, so the app is one file. No Updater.exe -
+          # updating is disabled in this build.
+          Copy-Item "$PWD\$env:BUILD_DIR\Telegram.exe" (Join-Path $stage 'Fokigram.exe')
           $zip = Join-Path $env:RUNNER_TEMP "$name.zip"
           if (Test-Path $zip) { Remove-Item $zip }
           Compress-Archive -Path "$stage\*" -DestinationPath $zip
           echo "ARCHIVE=$zip" >> $env:GITHUB_ENV
-          Write-Host ("Telegram.exe {0:N0} + Updater.exe {1:N0} bytes -> {2:N0} zipped" -f `
-            (Get-Item "$PWD\$env:BUILD_DIR\Telegram.exe").Length, `
-            (Get-Item "$PWD\$env:BUILD_DIR\Updater.exe").Length, (Get-Item $zip).Length)
+          Write-Host ("Fokigram.exe {0:N0} bytes -> {1:N0} zipped" -f `
+            (Get-Item "$PWD\$env:BUILD_DIR\Telegram.exe").Length, (Get-Item $zip).Length)
 
       - uses: actions/upload-artifact@v7
         name: Upload the artifact.
         with:
-          name: Telegram XP ${{ env.AppVersionStr }}
+          name: Fokigram XP ${{ env.AppVersionStr }}
           path: ${{ env.ARCHIVE }}
 
       # Always: it is small, and without it a stack captured from a hung build

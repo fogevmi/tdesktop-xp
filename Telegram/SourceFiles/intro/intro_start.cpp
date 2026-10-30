@@ -6,6 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "intro/intro_start.h"
+#include "core/version.h"
 
 #include "lang/lang_keys.h"
 #include "intro/intro_qr.h"
@@ -24,13 +25,13 @@ StartWidget::StartWidget(
 	not_null<Data*> data)
 : Step(parent, account, data, true) {
 	setMouseTracking(true);
-	setTitleText(rpl::single(u"Telegram Desktop"_q));
+	setTitleText(rpl::single(AppName.utf16()));
 	// XP walk: lng_intro_about welcomes the user to "the official Telegram
 	// Desktop app". Hardcoded rather than a lang key, for the reason in
 	// about_box.cpp: a downloaded langpack would override the key and restore
 	// the official wording.
-	setDescriptionText(u"Welcome to Telegram Desktop for Windows XP.\n"
-		"An unofficial build. It's fast and secure."_q);
+	setDescriptionText(u"Welcome to Fokigram for Windows XP.\n"
+		"An unofficial Telegram client. It's fast and secure."_q);
 	show();
 }
 

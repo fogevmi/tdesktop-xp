@@ -6,6 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "tray.h"
+#include "core/version.h"
 #include "tray_accounts_menu.h"
 
 #include "core/application.h"
@@ -79,7 +80,7 @@ void Tray::rebuildMenu() {
 			_activeForTrayIconAction = Core::App().isActiveForTrayMenu();
 			return _activeForTrayIconAction
 				? tr::lng_minimize_to_tray(tr::now)
-				: tr::lng_open_from_tray(tr::now);
+				: tr::lng_open_from_tray(tr::now).replace(u"Telegram"_q, AppName.utf16());
 		});
 
 		_tray.addAction(
@@ -100,7 +101,10 @@ void Tray::rebuildMenu() {
 			[=] { toggleSoundNotifications(); });
 	}
 
-	_tray.addAction(tr::lng_quit_from_tray(), [] { Core::Quit(); });
+	_tray.addAction(tr::lng_quit_from_tray() | rpl::map([](QString text) {
+		// Fokigram: langpacks name the app in these two items.
+		return text.replace(u"Telegram"_q, AppName.utf16());
+	}), [] { Core::Quit(); });
 
 	TrayAccountsMenu::Fill(_tray);
 

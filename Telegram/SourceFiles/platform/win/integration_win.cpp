@@ -6,6 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "platform/win/integration_win.h"
+#include "core/version.h"
 
 #include "base/platform/win/base_windows_winrt.h"
 #include "core/application.h"
@@ -141,7 +142,9 @@ void WindowsIntegration::refreshCustomJumpList() {
 		}
 		auto titlePropVar = PROPVARIANT();
 		hr = InitPropVariantFromString(
-			tr::lng_quit_from_tray(tr::now).toStdWString().c_str(),
+			tr::lng_quit_from_tray(tr::now).replace(
+				u"Telegram"_q,
+				AppName.utf16()).toStdWString().c_str(),
 			&titlePropVar);
 		if (SUCCEEDED(hr)) {
 			hr = propertyStore->SetValue(PKEY_Title, titlePropVar);

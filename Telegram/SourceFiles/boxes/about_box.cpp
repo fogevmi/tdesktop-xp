@@ -67,14 +67,14 @@ rpl::producer<TextWithEntities> XpText() {
 	// instead of a lang key on purpose: a downloaded langpack overrides every
 	// key it knows, and would quietly put the official wording back.
 	return rpl::single(TextWithEntities{
-		u"Unofficial client. A special build for Windows XP, "
-		"not affiliated with Telegram."_q });
+		u"Fokigram: an unofficial client for Windows XP, based on Forkgram XP "
+		"(github.com/forkgram/tdesktop-xp). Not affiliated with Telegram."_q });
 }
 
 } // namespace
 
 void AboutBox(not_null<Ui::GenericBox*> box) {
-	box->setTitle(u"Telegram Desktop"_q);
+	box->setTitle(AppName.utf16());
 
 	auto layout = box->verticalLayout();
 
