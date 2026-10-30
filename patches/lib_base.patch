@@ -1190,6 +1190,76 @@ index 0229f76..9a962f1 100644
  }
  
  } // namespace base
+diff --git a/base/platform/win/base_windows_safe_library.cpp b/base/platform/win/base_windows_safe_library.cpp
+index 6272ddf..98e24ad 100644
+--- a/base/platform/win/base_windows_safe_library.cpp
++++ b/base/platform/win/base_windows_safe_library.cpp
+@@ -34,51 +34,6 @@ __declspec(noreturn) void FatalError(
+ 	std::abort();
+ }
+ 
+-void CheckDynamicLibraries() {
+-	auto exePath = std::array<WCHAR, kMaxPathLong + 1>{ 0 };
+-	const auto exeLength = GetModuleFileName(
+-		nullptr,
+-		exePath.data(),
+-		kMaxPathLong + 1);
+-	if (!exeLength || exeLength >= kMaxPathLong + 1) {
+-		FatalError(L"Could not get executable path!");
+-	}
+-	const auto exe = std::wstring(exePath.data());
+-	const auto last1 = exe.find_last_of('\\');
+-	const auto last2 = exe.find_last_of('/');
+-	const auto last = std::max(
+-		(last1 == std::wstring::npos) ? -1 : int(last1),
+-		(last2 == std::wstring::npos) ? -1 : int(last2));
+-	if (last < 0) {
+-		FatalError(L"Could not get executable directory!");
+-	}
+-	const auto search = exe.substr(0, last + 1) + L"*.dll";
+-
+-	auto findData = WIN32_FIND_DATA();
+-	const auto findHandle = FindFirstFile(search.c_str(), &findData);
+-	if (findHandle == INVALID_HANDLE_VALUE) {
+-		const auto error = GetLastError();
+-		if (error == ERROR_FILE_NOT_FOUND) {
+-			return;
+-		}
+-		FatalError(L"Could not enumerate executable path!", error);
+-	}
+-
+-	do {
+-		if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+-			continue;
+-		}
+-		const auto me = exe.substr(last + 1);
+-		FatalError(L"Unknown DLL library \"\
+-" + std::wstring(findData.cFileName) + L"\" found \
+-in the directory with " + me + L".\n\n\
+-This may be a virus or a malicious program. \n\n\
+-Please remove all DLL libraries from this directory:\n\n\
+-" + exe.substr(0, last) + L"\n\n\
+-Alternatively, you can move " + me + L" to a new directory.");
+-	} while (FindNextFile(findHandle, &findData));
+-}
+-
+ BOOL (__stdcall *SetDefaultDllDirectories)(_In_ DWORD DirectoryFlags);
+ 
+ } // namespace
+@@ -129,10 +84,11 @@ void ReportLoadFailure(HINSTANCE library, LPCSTR name, DWORD id) {
+ void InitDynamicLibraries() {
+ 	static const auto Inited = [] {
+ 		const auto kernel = LoadLibrary(L"kernel32.dll");
++		// Fokigram: no SetDefaultDllDirectories means XP. There the app may
++		// carry DLLs of its own next to the exe, which LoadLibrary finds
++		// first, so the "unknown DLL in the exe folder" check is dropped.
+ 		if (LOAD_SYMBOL(kernel, SetDefaultDllDirectories)) {
+ 			SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_SYSTEM32);
+-		} else {
+-			CheckDynamicLibraries();
+ 		}
+ 		return true;
+ 	}();
 diff --git a/base/platform/win/base_windows_shlobj_h.h b/base/platform/win/base_windows_shlobj_h.h
 index a6d3c75..263f18a 100644
 --- a/base/platform/win/base_windows_shlobj_h.h

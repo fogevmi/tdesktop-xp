@@ -6,6 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "settings/sections/settings_advanced.h"
+#include "core/version.h"
 
 #include "settings/settings_common_session.h"
 
@@ -82,6 +83,14 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 namespace Settings {
 namespace {
+
+// Fokigram: langpacks name the app in some of these items.
+[[nodiscard]] rpl::producer<QString> WithAppName(
+		rpl::producer<QString> text) {
+	return std::move(text) | rpl::map([](QString value) {
+		return value.replace(u"Telegram"_q, AppName.utf16());
+	});
+}
 
 using namespace Builder;
 
@@ -664,7 +673,7 @@ void BuildSystemIntegrationSection(SectionBuilder &builder) {
 
 		const auto autostart = builder.addCheckbox({
 			u"advanced/autostart"_q, // id
-			tr::lng_settings_auto_start(), // title
+			WithAppName(tr::lng_settings_auto_start()), // title
 			cAutoStart(), // checked
 			{ u"autostart"_q, u"startup"_q, u"boot"_q }, // keywords
 		});
@@ -736,7 +745,7 @@ void BuildSystemIntegrationSection(SectionBuilder &builder) {
 	if (Platform::IsWindows() && !Platform::IsWindowsStoreBuild()) {
 		const auto sendto = builder.addCheckbox({
 			u"advanced/sendto"_q, // id
-			tr::lng_settings_add_sendto(), // title
+			WithAppName(tr::lng_settings_add_sendto()), // title
 			cSendToMenu(), // checked
 			{ u"sendto"_q, u"send"_q, u"menu"_q, u"context"_q }, // keywords
 		});
@@ -1887,7 +1896,7 @@ void SetupSystemIntegrationContent(
 		};
 
 		const auto autostart = addCheckbox(
-			tr::lng_settings_auto_start(),
+			WithAppName(tr::lng_settings_auto_start()),
 			cAutoStart());
 		const auto minimized = addSlidingCheckbox(
 			tr::lng_settings_start_min(),
@@ -1943,7 +1952,7 @@ void SetupSystemIntegrationContent(
 
 	if (Platform::IsWindows() && !Platform::IsWindowsStoreBuild()) {
 		const auto sendto = addCheckbox(
-			tr::lng_settings_add_sendto(),
+			WithAppName(tr::lng_settings_add_sendto()),
 			cSendToMenu());
 
 		sendto->checkedChanges(

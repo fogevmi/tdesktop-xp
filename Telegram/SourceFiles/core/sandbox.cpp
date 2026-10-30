@@ -6,6 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "core/sandbox.h"
+#include "core/version.h"
 
 #include "base/platform/base_platform_info.h"
 #include "platform/platform_specific.h"
@@ -409,7 +410,8 @@ void Sandbox::socketError(QLocalSocket::LocalSocketError e) {
 	}
 
 	if (e == QLocalSocket::ServerNotFoundError) {
-		LOG(("This is the only instance of Telegram, starting server and app..."));
+		LOG(("This is the only instance of %1, starting server and app..."
+			).arg(AppName.utf16()));
 	} else {
 		LOG(("Socket connect error %1, starting server and app...").arg(e));
 	}
