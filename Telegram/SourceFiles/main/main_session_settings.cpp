@@ -31,6 +31,15 @@ SessionSettings::SessionSettings()
 : _selectorTab(ChatHelpers::SelectorTab::Emoji)
 , _supportSwitch(Support::SwitchSettings::Next)
 , _setupEmailState(Data::SetupEmailState::None) {
+	// Fokigram: a new login starts light on old machines with little RAM -
+	// nothing plays by itself, no file or music is fetched unasked. A saved
+	// profile replaces all of this in addFromSerialized().
+	using namespace Data::AutoDownload;
+	_autoDownload = WithDisabledAutoPlay(_autoDownload);
+	for (const auto source : { Source::User, Source::Group, Source::Channel }) {
+		_autoDownload.setBytesLimit(source, Type::File, 0);
+		_autoDownload.setBytesLimit(source, Type::Music, 0);
+	}
 }
 
 QByteArray SessionSettings::serialize() const {

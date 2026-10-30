@@ -1160,7 +1160,7 @@ private:
 	base::flat_map<QString, QString> _soundOverrides;
 	base::flat_set<QString> _noWarningExtensions;
 	bool _ipRevealWarning = true;
-	bool _loopAnimatedStickers = true;
+	bool _loopAnimatedStickers = false; // Fokigram: low-RAM default.
 	rpl::variable<bool> _largeEmoji = true;
 	rpl::variable<bool> _replaceEmoji = true;
 	rpl::variable<bool> _systemTextReplace = true;
@@ -1170,13 +1170,13 @@ private:
 	rpl::variable<bool> _cornerReply = true;
 	rpl::variable<bool> _cornerReaction = true;
 	rpl::variable<bool> _pullToNextChannel = true;
-	rpl::variable<bool> _spellcheckerEnabled = true;
+	rpl::variable<bool> _spellcheckerEnabled = false; // Fokigram: low-RAM default.
 	PlaybackSpeed _videoPlaybackSpeed;
 	rpl::variable<PlaybackSpeed> _voicePlaybackSpeed;
 	rpl::variable<PlaybackSpeed> _audioPlaybackSpeed;
 	QByteArray _videoPipGeometry;
 	rpl::variable<std::vector<int>> _dictionariesEnabled;
-	rpl::variable<bool> _autoDownloadDictionaries = true;
+	rpl::variable<bool> _autoDownloadDictionaries = false; // Fokigram.
 	rpl::variable<bool> _mainMenuAccountsShown = true;
 	mutable std::vector<RecentEmojiPreload> _recentEmojiPreload;
 	mutable std::vector<RecentEmoji> _recentEmoji;

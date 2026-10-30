@@ -370,6 +370,10 @@ void start() {
 		_readOldMtpData(false, context); // needed further in _readMtpData
 		applyReadContext(std::move(context));
 
+		// Fokigram: a first start - no settings file yet - goes easy on old
+		// machines with little RAM. Every animation is off until the user
+		// turns some back on in Settings > Battery and Animations.
+		PowerSaving::Set(PowerSaving::kAll);
 		_settingsRewriteNeeded = true;
 		ApplyDefaultNightMode();
 		return;
